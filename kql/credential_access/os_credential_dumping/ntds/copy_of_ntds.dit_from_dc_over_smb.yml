@@ -1,0 +1,12 @@
+title: Copy of ntds.dit from domain controller over SMB
+mitre: OS Credential Dumping: NTDS
+author: slg997
+query:  """
+        IdentityDirectoryEvents
+        | where ActionType == "SMB file copy"
+        | extend msg = parse_json(AdditionalFields)
+        | extend sourceComputerId = msg['SourceComputerId'], filename = msg['FileName'], filePath=msg['FilePath'], fileSize = msg['FileSize']
+        | where filename has "ntds.dit"
+        | project Timestamp, sourceComputerId, sourceIp = IPAddress, DestinationDeviceName, filename, filePath, fileSize
+        | sort by Time asc
+        """
