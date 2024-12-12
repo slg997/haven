@@ -1,4 +1,4 @@
-# Use JQ to parse AWS CloudTrail Logs
+# Using JQ to parse AWS CloudTrail Logs
 
 ## Examples
 ## Filter by S3 Service and BucketName
