@@ -1,0 +1,10 @@
+title: Suspect regsvr32 command
+mitre: Defense Evasion: DLL Side-Loading
+author: slg997
+query:  """
+        DeviceProcessEvents
+        | where FileName =~ "regsvr32.exe"
+        | where ProcessCommandLine has_any (@"\ProgramData\",@"\Temp\",@"\Users\Public\",@"\Windows\Temp\",@"\AppData\Local\Temp\",@"\AppData\Roaming\")
+        or ((ProcessCommandLine has "/i" or ProcessCommandLine has "-i") and (ProcessCommandLine has "ftp" or ProcessCommandLine contains "http"))
+        | sort by Timestamp asc
+        """
