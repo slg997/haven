@@ -1,0 +1,14 @@
+title: Suspect rundll32 command
+mitre: Defense Evasion: DLL Side-Loading
+description: 
+author: slg997
+query:  """
+        DeviceProcessEvents
+		| where FileName =~ "rundll32.exe"
+		| extend extractip = extract(@"(http(s|):\/\/|\\\\)((\d{1,3}\.){3}\d{1,3})",3,ProcessCommandLine)
+		| where not(ProcessCommandLine has @"C:\WINDOWS\system32\davclnt.dll")
+		| where (isnotempty(extractip) and ipv4_is_private(extractip) == false) 
+		or ProcessCommandLine has_any ("minidump","comsvcs.dll","javascript")
+		or ProcessCommandLine has "url.dll" and (ProcessCommandLine has_all ("FileProtocolHandler","file://") or ProcessCommandLine has "OpenURL")
+        | sort by Timestamp asc
+        """
